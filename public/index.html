@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marvel Golden Age Heroes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Marvel Golden Age Heroes</h1>
+
+<!-- Vis liste over helte -->
+<table id="hero-table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Alias</th>
+        <th>Powers</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="hero-list">
+    </tbody>
+</table>
+
+<!-- Formular til at tilføje en ny helt -->
+<h2>Tilføj ny helt</h2>
+<form id="hero-form">
+    <label for="name">Navn:</label>
+    <input type="text" id="name" required><br><br>
+    <label for="alias">Alias:</label>
+    <input type="text" id="alias" required><br><br>
+    <label for="powers">Kræfter (adskilt med komma):</label>
+    <input type="text" id="powers" required><br><br>
+    <button type="submit">Tilføj Helt</button>
+</form>
+
+<!-- Opdateringsformular (skjult indtil der er valgt en helt at opdatere) -->
+<h2>Opdater Helt</h2>
+<form id="update-form" style="display:none;">
+    <input type="hidden" id="update-id">
+    <label for="update-name">Navn:</label>
+    <input type="text" id="update-name" required><br><br>
+    <label for="update-alias">Alias:</label>
+    <input type="text" id="update-alias" required><br><br>
+    <label for="update-powers">Kræfter (adskilt med komma):</label>
+    <input type="text" id="update-powers" required><br><br>
+    <button type="submit">Opdater Helt</button>
+</form>
+
+<script>
+    const apiUrl = 'http://localhost:3000/heroes';
+
+    // Funktion til at hente og vise alle helte
+    function fetchHeroes() {
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const heroList = document.getElementById('hero-list');
+                heroList.innerHTML = ''; // Tøm listen først
+
+                data.forEach(hero => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                            <td>${hero.id}</td>
+                            <td>${hero.name}</td>
+                            <td>${hero.alias}</td>
+                            <td>${hero.powers.join(', ')}</td>
+                            <td>
+                                <button onclick="editHero(${hero.id})">Opdater</button>
+                                <button onclick="deleteHero(${hero.id})">Slet</button>
+                            </td>
+                        `;
+
+                    heroList.appendChild(row);
+                });
+            });
+    }
+
+    // Funktion til at tilføje en ny helt
+    document.getElementById('hero-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const alias = document.getElementById('alias').value;
+        const powers = document.getElementById('powers').value.split(',');
+
+        const newHero = {
+            name: name.trim(),
+            alias: alias.trim(),
+            powers: powers.map(p => p.trim())
+        };
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newHero)
+        })
+            .then(response => response.json())
+            .then(() => {
+                fetchHeroes(); // Opdater listen
+                document.getElementById('hero-form').reset(); // Nulstil formularen
+            });
+    });
+
+    // Funktion til at slette en helt
+    function deleteHero(id) {
+        fetch(`${apiUrl}/${id}`, {
+            method: 'DELETE'
+        })
+            .then(() => {
+                fetchHeroes(); // Opdater listen
+            });
+    }
+
+    // Funktion til at forberede opdateringsformularen
+    function editHero(id) {
+        fetch(`${apiUrl}/${id}`)
+            .then(response => response.json())
+            .then(hero => {
+                document.getElementById('update-id').value = hero.id;
+                document.getElementById('update-name').value = hero.name;
+                document.getElementById('update-alias').value = hero.alias;
+                document.getElementById('update-powers').value = hero.powers.join(', ');
+
+                document.getElementById('update-form').style.display = 'block'; // Vis opdateringsformularen
+            });
+    }
+
+    // Funktion til at opdatere en helt
+    document.getElementById('update-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const id = document.getElementById('update-id').value;
+        const name = document.getElementById('update-name').value;
+        const alias = document.getElementById('update-alias').value;
+        const powers = document.getElementById('update-powers').value.split(',');
+
+        const updatedHero = {
+            name: name.trim(),
+            alias: alias.trim(),
+            powers: powers.map(p => p.trim())
+        };
+
+        fetch(`${apiUrl}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedHero)
+        })
+            .then(response => response.json())
+            .then(() => {
+                fetchHeroes(); // Opdater listen
+                document.getElementById('update-form').style.display = 'none'; // Skjul opdateringsformularen
+                document.getElementById('update-form').reset(); // Nulstil opdateringsformularen
+            });
+    });
+
+    // Hent alle helte, når siden indlæses
+    fetchHeroes();
+</script>
+</body>
+</html>

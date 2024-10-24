@@ -1,0 +1,71 @@
+[
+  {
+    "id": 2,
+    "name": "Namor the Sub-Mariner",
+    "alias": "Namor McKenzie",
+    "powers": [
+      "Aquatic abilities",
+      "Super strength",
+      "Flight"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Human Torch",
+    "alias": "Jim Hammond",
+    "powers": [
+      "Pyrokinesis",
+      "Flight",
+      "Invulnerability"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "The Angel",
+    "alias": "Thomas Halloway",
+    "powers": [
+      "Peak human condition",
+      "Martial arts",
+      "Detective skills"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "The Vision",
+    "alias": "Aarkus",
+    "powers": [
+      "Density control",
+      "Intangibility",
+      "Flight",
+      "Super strength"
+    ]
+  },
+  {
+    "name": "New Hero",
+    "alias": "New Alias",
+    "powers": [
+      "New Power 1",
+      "New Power 2"
+    ],
+    "id": 6
+  },
+  {
+    "name": "ny helt 23",
+    "alias": "supersej",
+    "powers": [
+      "ny sejr",
+      "flyv",
+      "styrke"
+    ],
+    "id": 7
+  },
+  {
+    "name": "omega",
+    "alias": "omega sej",
+    "powers": [
+      "usynlighed",
+      "teleport"
+    ],
+    "id": 8
+  }
+]
